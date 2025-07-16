@@ -4,10 +4,9 @@ import { LanguageTexts } from "@/data/languages";
 
 interface InstructionsPanelProps {
   texts: LanguageTexts;
-  handMappingConfig?: any;
 }
 
-export function InstructionsPanel({ texts, handMappingConfig }: InstructionsPanelProps) {
+export function InstructionsPanel({ texts }: InstructionsPanelProps) {
   const instructionVariants = {
     hidden: { opacity: 0, x: -20 },
     visible: (i: number) => ({

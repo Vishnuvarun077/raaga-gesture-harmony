@@ -46,16 +46,6 @@ export interface LanguageTexts {
   // General
   enableCameraLabel: string;
   cameraPermissionText: string;
-  
-  // Hand Mapping Configuration
-  handMapping: string;
-  handMappingConfig: string;
-  mappingDirection: string;
-  leftToRight: string;
-  rightToLeft: string;
-  cyclic: string;
-  leftHand: string;
-  rightHand: string;
 }
 
 export const languages: Record<string, LanguageTexts> = {
@@ -91,15 +81,7 @@ export const languages: Record<string, LanguageTexts> = {
     instruction7: "• Ring finger to thumb: Da",
     instruction8: "• Pinky finger to thumb: Ni",
     enableCameraLabel: "Enable Camera",
-    cameraPermissionText: "Camera access is required for hand tracking",
-    handMapping: "Hand Mapping",
-    handMappingConfig: "Hand Mapping Configuration",
-    mappingDirection: "Mapping Direction",
-    leftToRight: "Left to Right",
-    rightToLeft: "Right to Left",
-    cyclic: "Cyclic",
-    leftHand: "Left Hand",
-    rightHand: "Right Hand"
+    cameraPermissionText: "Camera access is required for hand tracking"
   },
   te: {
     appTitle: "రాగరంగం",
@@ -133,15 +115,7 @@ export const languages: Record<string, LanguageTexts> = {
     instruction7: "• ఉంగరపు వేలు - బొటనవేలు: ద",
     instruction8: "• చిటికెన వేలు - బొటనవేలు: ని",
     enableCameraLabel: "కెమెరాను సక్రియం చేయండి",
-    cameraPermissionText: "చేతి ట్రాకింగ్ కోసం కెమెరా యాక్సెస్ అవసరం",
-    handMapping: "చేతి మ్యాపింగ్",
-    handMappingConfig: "చేతి మ్యాపింగ్ కాన్ఫిగరేషన్",
-    mappingDirection: "మ్యాపింగ్ దిశ",
-    leftToRight: "ఎడమ నుండి కుడి",
-    rightToLeft: "కుడి నుండి ఎడమ",
-    cyclic: "చక్రీయ",
-    leftHand: "ఎడమ చేతి",
-    rightHand: "కుడి చేతి"
+    cameraPermissionText: "చేతి ట్రాకింగ్ కోసం కెమెరా యాక్సెస్ అవసరం"
   },
   hi: {
     appTitle: "रागरंगम",
@@ -175,14 +149,6 @@ export const languages: Record<string, LanguageTexts> = {
     instruction7: "• अनामिका से अंगूठे तक: ध",
     instruction8: "• कनिष्ठा से अंगूठे तक: नि",
     enableCameraLabel: "कैमरा सक्षम करें",
-    cameraPermissionText: "हाथ ट्रैकिंग के लिए कैमरा एक्सेस आवश्यक है",
-    handMapping: "हाथ मैपिंग",
-    handMappingConfig: "हाथ मैपिंग कॉन्फ़िगरेशन",
-    mappingDirection: "मैपिंग दिशा",
-    leftToRight: "बाएं से दाएं",
-    rightToLeft: "दाएं से बाएं",
-    cyclic: "चक्रीय",
-    leftHand: "बायां हाथ",
-    rightHand: "दाहिना हाथ"
+    cameraPermissionText: "हाथ ट्रैकिंग के लिए कैमरा एक्सेस आवश्यक है"
   }
 };
