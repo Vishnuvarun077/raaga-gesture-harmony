@@ -117,9 +117,13 @@ export function HandTrackingCanvas({ onHandGesture, isActive }: HandTrackingCanv
   const checkFingerGestures = (landmarks: any[], handType: string) => {
     const thumbTip = landmarks[4];
     const fingerTips = [8, 12, 16, 20]; // Index, Middle, Ring, Pinky
+    
+    // New mapping: Left hand pinky to right hand pinky in order
+    // Left hand: Pinky=Sa, Ring=Ri, Middle=Ga, Index=Ma
+    // Right hand: Index=Pa, Middle=Da, Ring=Ni, Pinky=unused (for now)
     const swaras = handType === "Left" 
-      ? ["Sa", "Ri", "Ga", null] 
-      : ["Ma", "Pa", "Da", "Ni"];
+      ? ["Ma", "Ga", "Ri", "Sa"] // Index, Middle, Ring, Pinky
+      : ["Pa", "Da", "Ni", null]; // Index, Middle, Ring, Pinky
 
     fingerTips.forEach((fingerId, index) => {
       const fingerTip = landmarks[fingerId];
@@ -159,7 +163,7 @@ export function HandTrackingCanvas({ onHandGesture, isActive }: HandTrackingCanv
     >
       <video
         ref={videoRef}
-        className="hidden"
+        className="absolute inset-0 w-full h-full object-cover rounded-xl transform scale-x-[-1]"
         autoPlay
         playsInline
         onLoadedMetadata={() => {
@@ -171,7 +175,7 @@ export function HandTrackingCanvas({ onHandGesture, isActive }: HandTrackingCanv
       />
       <canvas
         ref={canvasRef}
-        className="w-full h-full object-cover rounded-xl transform scale-x-[-1]"
+        className="absolute inset-0 w-full h-full object-cover rounded-xl transform scale-x-[-1] pointer-events-none"
         style={{ aspectRatio: '16/9' }}
       />
     </motion.div>

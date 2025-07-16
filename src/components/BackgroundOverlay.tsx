@@ -8,7 +8,7 @@ interface BackgroundOverlayProps {
 export function BackgroundOverlay({ isActive = false }: BackgroundOverlayProps) {
   return (
     <motion.div
-      className="fixed inset-0 z-0"
+      className="fixed inset-0 z-0 pointer-events-none"
       initial={{ opacity: 1 }}
       animate={{ opacity: isActive ? 0.3 : 0.6 }}
       transition={{ duration: 1 }}
