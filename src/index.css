@@ -2,95 +2,76 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* RaagaRangam Design System - Carnatic Music Inspired */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Base colors inspired by traditional Indian classical music */
+    --background: 230 25% 8%;
+    --foreground: 45 100% 85%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 230 20% 12%;
+    --card-foreground: 45 100% 85%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 230 20% 12%;
+    --popover-foreground: 45 100% 85%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Primary - Golden yellow (traditional Indian color) */
+    --primary: 45 100% 55%;
+    --primary-foreground: 230 25% 8%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Secondary - Warm amber */
+    --secondary: 38 90% 50%;
+    --secondary-foreground: 45 100% 95%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    /* Muted - Darker blue-gray */
+    --muted: 230 15% 20%;
+    --muted-foreground: 45 30% 65%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* Accent - Orange (saffron inspired) */
+    --accent: 25 95% 60%;
+    --accent-foreground: 45 100% 95%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    /* Destructive - Red */
+    --destructive: 0 75% 60%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 230 20% 25%;
+    --input: 230 20% 15%;
+    --ring: 45 100% 55%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    /* Custom design tokens for RaagaRangam */
+    --raga-primary: 45 100% 55%;
+    --raga-secondary: 38 90% 50%;
+    --raga-accent: 25 95% 60%;
+    --raga-background: 230 25% 8%;
+    --raga-surface: 230 20% 12%;
+    --raga-surface-elevated: 230 20% 16%;
+    
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(230, 25%, 8%) 0%, hsl(230, 30%, 12%) 50%, hsl(230, 35%, 16%) 100%);
+    --gradient-accent: linear-gradient(135deg, hsl(45, 100%, 55%) 0%, hsl(25, 95%, 60%) 100%);
+    --gradient-surface: linear-gradient(135deg, hsl(230, 20%, 12%) 0%, hsl(230, 20%, 16%) 100%);
+    
+    /* Shadows */
+    --shadow-glow: 0 0 20px hsl(45, 100%, 55%, 0.3);
+    --shadow-soft: 0 4px 20px hsl(230, 25%, 4%, 0.4);
+    --shadow-medium: 0 8px 30px hsl(230, 25%, 4%, 0.6);
+    
+    /* Animations */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    
+    /* Typography */
+    --font-primary: 'Poppins', sans-serif;
+    --font-telugu: 'Noto Sans Telugu', sans-serif;
+    --font-hindi: 'Noto Sans Devanagari', sans-serif;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    /* Already optimized for dark theme */
   }
 }
 
@@ -100,6 +81,23 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-primary;
+    font-family: 'Poppins', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  /* Language-specific font classes */
+  .telugu-font {
+    font-family: 'Noto Sans Telugu', sans-serif;
+  }
+  
+  .hindi-font {
+    font-family: 'Noto Sans Devanagari', sans-serif;
+  }
+  
+  /* Ensure proper scrolling behavior */
+  html {
+    scroll-behavior: smooth;
   }
 }
