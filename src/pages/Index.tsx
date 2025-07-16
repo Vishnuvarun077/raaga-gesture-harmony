@@ -9,7 +9,11 @@ import { WelcomeScreen } from "@/components/WelcomeScreen";
 import { InstructionsPanel } from "@/components/InstructionsPanel";
 import { PerformanceInfo } from "@/components/PerformanceInfo";
 import { BackgroundOverlay } from "@/components/BackgroundOverlay";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { HandMappingConfig } from "@/components/HandMappingConfig";
 import { useAudioEngine } from "@/hooks/useAudioEngine";
+import { useTheme } from "@/hooks/useTheme";
+import { useHandMappingConfig } from "@/hooks/useHandMappingConfig";
 import { languages } from "@/data/languages";
 import { ragas, talas, getRagaSpecificSwara } from "@/data/musicData";
 import { useToast } from "@/hooks/use-toast";
@@ -22,6 +26,10 @@ interface Particle {
 }
 
 const Index = () => {
+  // Theme and configuration hooks
+  const { theme } = useTheme();
+  const { config: handMappingConfig } = useHandMappingConfig();
+  
   // State management
   const [currentLanguage, setCurrentLanguage] = useState<Language>('en');
   const [showWelcome, setShowWelcome] = useState(true);
@@ -127,23 +135,31 @@ const Index = () => {
       {/* Background Overlay */}
       <BackgroundOverlay isActive={isExperienceActive} />
       
-      {/* Language Switcher */}
-      <LanguageSwitcher
-        currentLanguage={currentLanguage}
-        onLanguageChange={setCurrentLanguage}
-      />
+      {/* Top Controls */}
+      <div className="fixed top-4 right-4 z-50 flex items-center gap-2">
+        <ThemeToggle />
+        <LanguageSwitcher
+          currentLanguage={currentLanguage}
+          onLanguageChange={setCurrentLanguage}
+        />
+        {isExperienceActive && (
+          <HandMappingConfig 
+            currentLanguage={currentLanguage}
+          />
+        )}
+      </div>
 
-      {/* Header */}
+      {/* Header - Fixed clipping issue */}
       <motion.header
-        className="text-center py-6 relative z-10"
+        className="text-center py-4 px-4 relative z-10"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        <h1 className="text-4xl sm:text-6xl font-light text-transparent bg-clip-text bg-gradient-to-r from-raga-primary via-raga-secondary to-raga-accent tracking-wider mb-2">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light text-transparent bg-clip-text bg-gradient-accent tracking-wider mb-2 break-words leading-tight">
           {texts.appTitle}
         </h1>
-        <p className="text-raga-secondary font-light text-lg">
+        <p className="text-raga-secondary font-light text-sm sm:text-base md:text-lg">
           {texts.appSubtitle}
         </p>
       </motion.header>

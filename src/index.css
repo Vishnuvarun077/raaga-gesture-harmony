@@ -2,11 +2,79 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Noto+Sans+Telugu:wght@400;500;600&family=Noto+Sans+Devanagari:wght@400;500;600&display=swap');
+
 /* RaagaRangam Design System - Carnatic Music Inspired */
 
 @layer base {
   :root {
-    /* Base colors inspired by traditional Indian classical music */
+    /* Light theme colors */
+    --background: 0 0% 100%;
+    --foreground: 230 25% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 230 25% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 230 25% 15%;
+
+    /* Primary - Golden yellow (traditional Indian color) */
+    --primary: 45 100% 55%;
+    --primary-foreground: 0 0% 98%;
+
+    /* Secondary - Warm amber */
+    --secondary: 38 90% 50%;
+    --secondary-foreground: 0 0% 98%;
+
+    /* Muted - Light gray */
+    --muted: 210 40% 95%;
+    --muted-foreground: 215 16% 47%;
+
+    /* Accent - Orange (saffron inspired) */
+    --accent: 25 95% 60%;
+    --accent-foreground: 0 0% 98%;
+
+    /* Destructive - Red */
+    --destructive: 0 75% 60%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 45 100% 55%;
+
+    --radius: 0.75rem;
+
+    /* Custom design tokens for RaagaRangam - Light theme */
+    --raga-primary: 45 100% 55%;
+    --raga-secondary: 38 90% 50%;
+    --raga-accent: 25 95% 60%;
+    --raga-background: 0 0% 100%;
+    --raga-surface: 210 40% 98%;
+    --raga-surface-elevated: 210 40% 95%;
+    
+    /* Gradients - Light theme */
+    --gradient-primary: linear-gradient(135deg, hsl(0, 0%, 100%) 0%, hsl(210, 40%, 98%) 50%, hsl(210, 40%, 95%) 100%);
+    --gradient-accent: linear-gradient(135deg, hsl(45, 100%, 55%) 0%, hsl(25, 95%, 60%) 100%);
+    --gradient-surface: linear-gradient(135deg, hsl(210, 40%, 98%) 0%, hsl(210, 40%, 95%) 100%);
+    
+    /* Shadows - Light theme */
+    --shadow-glow: 0 0 20px hsl(45, 100%, 55%, 0.2);
+    --shadow-soft: 0 4px 20px hsl(0, 0%, 0%, 0.1);
+    --shadow-medium: 0 8px 30px hsl(0, 0%, 0%, 0.15);
+    
+    /* Animations */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    
+    /* Typography */
+    --font-primary: 'Poppins', sans-serif;
+    --font-telugu: 'Noto Sans Telugu', sans-serif;
+    --font-hindi: 'Noto Sans Devanagari', sans-serif;
+  }
+
+  .dark {
+    /* Dark theme colors */
     --background: 230 25% 8%;
     --foreground: 45 100% 85%;
 
@@ -40,9 +108,7 @@
     --input: 230 20% 15%;
     --ring: 45 100% 55%;
 
-    --radius: 0.75rem;
-
-    /* Custom design tokens for RaagaRangam */
+    /* Custom design tokens for RaagaRangam - Dark theme */
     --raga-primary: 45 100% 55%;
     --raga-secondary: 38 90% 50%;
     --raga-accent: 25 95% 60%;
@@ -50,28 +116,15 @@
     --raga-surface: 230 20% 12%;
     --raga-surface-elevated: 230 20% 16%;
     
-    /* Gradients */
+    /* Gradients - Dark theme */
     --gradient-primary: linear-gradient(135deg, hsl(230, 25%, 8%) 0%, hsl(230, 30%, 12%) 50%, hsl(230, 35%, 16%) 100%);
     --gradient-accent: linear-gradient(135deg, hsl(45, 100%, 55%) 0%, hsl(25, 95%, 60%) 100%);
     --gradient-surface: linear-gradient(135deg, hsl(230, 20%, 12%) 0%, hsl(230, 20%, 16%) 100%);
     
-    /* Shadows */
+    /* Shadows - Dark theme */
     --shadow-glow: 0 0 20px hsl(45, 100%, 55%, 0.3);
     --shadow-soft: 0 4px 20px hsl(230, 25%, 4%, 0.4);
     --shadow-medium: 0 8px 30px hsl(230, 25%, 4%, 0.6);
-    
-    /* Animations */
-    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    
-    /* Typography */
-    --font-primary: 'Poppins', sans-serif;
-    --font-telugu: 'Noto Sans Telugu', sans-serif;
-    --font-hindi: 'Noto Sans Devanagari', sans-serif;
-  }
-
-  .dark {
-    /* Already optimized for dark theme */
   }
 }
 

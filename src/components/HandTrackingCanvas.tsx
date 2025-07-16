@@ -1,19 +1,30 @@
-import { useRef, useEffect, useCallback } from "react";
+import { useRef, useEffect, useCallback, useState } from "react";
 import { motion } from "framer-motion";
+import { useHandMappingConfig } from "@/hooks/useHandMappingConfig";
 
 interface HandTrackingCanvasProps {
   onHandGesture: (swara: string, position: { x: number; y: number }) => void;
   isActive: boolean;
+  handMappingConfig?: any;
 }
 
-export function HandTrackingCanvas({ onHandGesture, isActive }: HandTrackingCanvasProps) {
+export function HandTrackingCanvas({ onHandGesture, isActive, handMappingConfig }: HandTrackingCanvasProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const handLandmarkerRef = useRef<any>(null);
+  const lastVideoTimeRef = useRef(-1);
+  const fingerStatesRef = useRef<any>({});
+  const cooldownsRef = useRef<Map<string, number>>(new Map());
+  const [isReady, setIsReady] = useState(false);
+  
+  const { getSwaraForFinger } = useHandMappingConfig();
+
+  const PINCH_THRESHOLD = 0.04;
+  const COOLDOWN_DURATION = 250; // Reduced for better responsiveness
 
   const initializeHandTracking = useCallback(async () => {
     try {
-      // Import MediaPipe modules
+      console.log("Initializing hand tracking...");
       const { HandLandmarker, FilesetResolver } = await import("@mediapipe/tasks-vision");
       
       const vision = await FilesetResolver.forVisionTasks(
@@ -28,8 +39,12 @@ export function HandTrackingCanvas({ onHandGesture, isActive }: HandTrackingCanv
         runningMode: "VIDEO",
         numHands: 2
       });
+      
+      console.log("Hand tracking initialized successfully");
+      setIsReady(true);
     } catch (error) {
       console.error("Failed to initialize hand tracking:", error);
+      setIsReady(false);
     }
   }, []);
 
@@ -37,17 +52,26 @@ export function HandTrackingCanvas({ onHandGesture, isActive }: HandTrackingCanv
     if (!videoRef.current) return;
 
     try {
+      console.log("Starting webcam...");
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { width: 1280, height: 720 }
+        video: { 
+          width: { ideal: 1280 }, 
+          height: { ideal: 720 },
+          facingMode: 'user'
+        }
       });
       videoRef.current.srcObject = stream;
+      console.log("Webcam started successfully");
     } catch (error) {
       console.error("Failed to start webcam:", error);
     }
   }, []);
 
   const processFrame = useCallback(() => {
-    if (!videoRef.current || !canvasRef.current || !handLandmarkerRef.current || !isActive) {
+    if (!videoRef.current || !canvasRef.current || !handLandmarkerRef.current || !isActive || !isReady) {
+      if (isActive) {
+        requestAnimationFrame(processFrame);
+      }
       return;
     }
 
@@ -60,19 +84,31 @@ export function HandTrackingCanvas({ onHandGesture, isActive }: HandTrackingCanv
       return;
     }
 
-    // Set canvas size to match video
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
+    const videoTime = video.currentTime;
+    if (videoTime === lastVideoTimeRef.current) {
+      requestAnimationFrame(processFrame);
+      return;
+    }
+    lastVideoTimeRef.current = videoTime;
 
-    // Draw video frame
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    // Set canvas size to match video
+    if (canvas.width !== video.videoWidth || canvas.height !== video.videoHeight) {
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+    }
+
+    // Clear and draw video frame
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.save();
+    ctx.scale(-1, 1);
+    ctx.drawImage(video, -canvas.width, 0, canvas.width, canvas.height);
+    ctx.restore();
 
     try {
       // Detect hands
-      const results = handLandmarkerRef.current.detectForVideo(video, performance.now());
+      const results = handLandmarkerRef.current.detectForVideo(video, videoTime * 1000);
       
       if (results.landmarks && results.landmarks.length > 0) {
-        // Process hand gestures
         processHandGestures(results, ctx);
       }
     } catch (error) {
@@ -80,12 +116,9 @@ export function HandTrackingCanvas({ onHandGesture, isActive }: HandTrackingCanv
     }
 
     requestAnimationFrame(processFrame);
-  }, [isActive, onHandGesture]);
+  }, [isActive, isReady, onHandGesture]);
 
   const processHandGestures = (results: any, ctx: CanvasRenderingContext2D) => {
-    // Hand gesture processing logic here
-    // This is a simplified version - you can expand based on your needs
-    
     for (let i = 0; i < results.landmarks.length; i++) {
       const landmarks = results.landmarks[i];
       const handedness = results.handedness[i];
@@ -93,46 +126,69 @@ export function HandTrackingCanvas({ onHandGesture, isActive }: HandTrackingCanv
       // Draw hand landmarks
       drawHandLandmarks(ctx, landmarks);
       
-      // Check for finger-thumb pinch gestures
-      checkFingerGestures(landmarks, handedness[0].categoryName);
+      // Process finger gestures with proper hand detection
+      const handType = handedness[0].categoryName;
+      checkFingerGestures(landmarks, handType);
     }
   };
 
   const drawHandLandmarks = (ctx: CanvasRenderingContext2D, landmarks: any[]) => {
-    ctx.fillStyle = "#ffd700";
-    ctx.strokeStyle = "#ffd700";
+    // Draw hand landmarks with golden color
+    ctx.save();
+    ctx.scale(-1, 1);
+    ctx.translate(-ctx.canvas.width, 0);
+    
+    ctx.fillStyle = "hsl(45, 100%, 55%)";
+    ctx.strokeStyle = "hsl(45, 100%, 55%)";
     ctx.lineWidth = 2;
 
-    // Draw connections between landmarks
-    landmarks.forEach((landmark, index) => {
+    // Draw landmarks
+    landmarks.forEach((landmark) => {
       const x = landmark.x * ctx.canvas.width;
       const y = landmark.y * ctx.canvas.height;
       
       ctx.beginPath();
-      ctx.arc(x, y, 4, 0, 2 * Math.PI);
+      ctx.arc(x, y, 3, 0, 2 * Math.PI);
       ctx.fill();
     });
+
+    ctx.restore();
   };
 
   const checkFingerGestures = (landmarks: any[], handType: string) => {
     const thumbTip = landmarks[4];
     const fingerTips = [8, 12, 16, 20]; // Index, Middle, Ring, Pinky
-    const swaras = handType === "Left" 
-      ? ["Sa", "Ri", "Ga", null] 
-      : ["Ma", "Pa", "Da", "Ni"];
+    const hand = handType === "Left" ? "left" : "right";
+    const now = Date.now();
 
-    fingerTips.forEach((fingerId, index) => {
+    fingerTips.forEach((fingerId, fingerIndex) => {
       const fingerTip = landmarks[fingerId];
       const distance = Math.hypot(
         fingerTip.x - thumbTip.x,
         fingerTip.y - thumbTip.y
       );
 
-      if (distance < 0.04 && swaras[index]) { // Threshold for pinch detection
-        onHandGesture(swaras[index]!, {
-          x: fingerTip.x,
-          y: fingerTip.y
-        });
+      const fingerKey = `${hand}_${fingerIndex}`;
+      const isPinching = distance < PINCH_THRESHOLD;
+      const wasPressed = fingerStatesRef.current[fingerKey];
+
+      if (isPinching && !wasPressed) {
+        // Just pressed
+        fingerStatesRef.current[fingerKey] = true;
+        
+        const swara = getSwaraForFinger(hand, fingerIndex);
+        if (swara) {
+          const cooldownKey = `${swara}_${hand}_${fingerIndex}`;
+          const lastTrigger = cooldownsRef.current.get(cooldownKey);
+          
+          if (!lastTrigger || now - lastTrigger > COOLDOWN_DURATION) {
+            onHandGesture(swara, { x: fingerTip.x, y: fingerTip.y });
+            cooldownsRef.current.set(cooldownKey, now);
+          }
+        }
+      } else if (!isPinching && wasPressed) {
+        // Just released
+        fingerStatesRef.current[fingerKey] = false;
       }
     });
   };
@@ -142,27 +198,37 @@ export function HandTrackingCanvas({ onHandGesture, isActive }: HandTrackingCanv
       initializeHandTracking();
       startWebcam();
     }
+    
+    return () => {
+      // Cleanup
+      if (videoRef.current && videoRef.current.srcObject) {
+        const stream = videoRef.current.srcObject as MediaStream;
+        stream.getTracks().forEach(track => track.stop());
+      }
+    };
   }, [isActive, initializeHandTracking, startWebcam]);
 
   useEffect(() => {
-    if (isActive && handLandmarkerRef.current) {
+    if (isActive && isReady) {
       processFrame();
     }
-  }, [isActive, processFrame]);
+  }, [isActive, isReady, processFrame]);
 
   return (
     <motion.div 
-      className="relative w-full h-full"
+      className="relative w-full h-full bg-background rounded-xl overflow-hidden"
       initial={{ opacity: 0 }}
       animate={{ opacity: isActive ? 1 : 0 }}
       transition={{ duration: 0.5 }}
     >
       <video
         ref={videoRef}
-        className="hidden"
+        className="absolute inset-0 w-full h-full object-cover"
         autoPlay
         playsInline
+        muted
         onLoadedMetadata={() => {
+          console.log("Video metadata loaded");
           if (canvasRef.current && videoRef.current) {
             canvasRef.current.width = videoRef.current.videoWidth;
             canvasRef.current.height = videoRef.current.videoHeight;
@@ -171,9 +237,17 @@ export function HandTrackingCanvas({ onHandGesture, isActive }: HandTrackingCanv
       />
       <canvas
         ref={canvasRef}
-        className="w-full h-full object-cover rounded-xl transform scale-x-[-1]"
-        style={{ aspectRatio: '16/9' }}
+        className="absolute inset-0 w-full h-full object-cover"
       />
+      
+      {!isReady && isActive && (
+        <div className="absolute inset-0 flex items-center justify-center bg-background/80 backdrop-blur-sm">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-2"></div>
+            <p className="text-sm text-muted-foreground">Initializing hand tracking...</p>
+          </div>
+        </div>
+      )}
     </motion.div>
   );
 }
