@@ -16,11 +16,9 @@ interface ControlPanelProps {
   isTanpuraPlaying: boolean;
   onTanpuraToggle: () => void;
   tanpuraVolume: number;
-  onTanpuraVolumeChange: (volume: number) => void;
+  onVolumeChange: (volume: number) => void;
   octave: number;
   onOctaveChange: (octave: number) => void;
-  talaCounter: number;
-  currentTala: any;
 }
 
 export function ControlPanel({
@@ -32,11 +30,9 @@ export function ControlPanel({
   isTanpuraPlaying,
   onTanpuraToggle,
   tanpuraVolume,
-  onTanpuraVolumeChange,
+  onVolumeChange,
   octave,
-  onOctaveChange,
-  talaCounter,
-  currentTala
+  onOctaveChange
 }: ControlPanelProps) {
   const containerVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -118,13 +114,11 @@ export function ControlPanel({
               </SelectContent>
             </Select>
             <div className="mt-2 flex justify-center space-x-1">
-              {currentTala?.pattern.map((beat: number, index: number) => (
+              {talas[selectedTala]?.pattern.map((beat, index) => (
                 <div
                   key={index}
-                  className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full ${
-                    index === talaCounter % currentTala.beats 
-                      ? (beat ? 'bg-amber-400 animate-pulse' : 'bg-orange-400 animate-pulse')
-                      : (beat ? 'bg-amber-600' : 'bg-gray-600')
+                  className={`w-2 h-2 rounded-full ${
+                    beat ? 'bg-raga-primary' : 'bg-muted'
                   }`}
                 />
               ))}
@@ -159,7 +153,7 @@ export function ControlPanel({
               </label>
               <Slider
                 value={[tanpuraVolume]}
-                onValueChange={(value) => onTanpuraVolumeChange(value[0])}
+                onValueChange={(value) => onVolumeChange(value[0])}
                 min={-60}
                 max={0}
                 step={1}

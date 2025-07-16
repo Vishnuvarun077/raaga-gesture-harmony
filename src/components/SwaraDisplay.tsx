@@ -3,16 +3,20 @@ import { allBaseSwaras, allSwarasWithVariants } from "@/data/musicData";
 
 interface SwaraDisplayProps {
   currentSwara?: string;
-  currentRaga: any;
+  currentRagaSwaras: string[];
+  currentOctave: number;
+  onSwaraClick?: (swara: string) => void;
 }
 
 export function SwaraDisplay({ 
   currentSwara, 
-  currentRaga
+  currentRagaSwaras, 
+  currentOctave,
+  onSwaraClick 
 }: SwaraDisplayProps) {
   const isSwaraPresent = (baseSwara: string) => {
     const relevantSwaras = allSwarasWithVariants.filter(s => s.startsWith(baseSwara));
-    return relevantSwaras.some(variant => currentRaga.swaras.includes(variant));
+    return relevantSwaras.some(variant => currentRagaSwaras.includes(variant));
   };
 
   const isSwaraActive = (swara: string) => {
@@ -20,25 +24,47 @@ export function SwaraDisplay({
   };
 
   return (
-    <div className="absolute bottom-2 sm:bottom-4 left-2 sm:left-4 right-2 sm:right-4 flex justify-center space-x-1 sm:space-x-2">
+    <motion.div 
+      className="flex justify-center space-x-2 absolute bottom-4 left-4 right-4"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay: 0.3 }}
+    >
       {allBaseSwaras.map((swara, index) => {
         const isPresent = isSwaraPresent(swara);
         const isActive = isSwaraActive(swara);
         
         return (
-          <div
+          <motion.button
             key={swara}
+            onClick={() => onSwaraClick && isPresent && onSwaraClick(swara)}
             className={`
-              swara-note bg-black bg-opacity-50 rounded-lg p-1 sm:p-2 text-center min-w-8 sm:min-w-12 text-xs sm:text-sm transition-all duration-100
-              ${isPresent ? '' : 'opacity-30 line-through pointer-events-none'}
-              ${isActive ? 'bg-gradient-to-r from-yellow-400 to-orange-500 text-black shadow-lg transform scale-110' : 'text-white'}
+              relative min-w-12 h-12 rounded-lg text-sm font-medium transition-all duration-300
+              ${isPresent 
+                ? 'bg-raga-surface hover:bg-raga-surface-elevated text-foreground cursor-pointer' 
+                : 'bg-muted/30 text-muted-foreground/50 line-through cursor-not-allowed'
+              }
+              ${isActive ? 'animate-swara-glow bg-gradient-accent text-black' : ''}
             `}
-            data-swara={swara}
+            disabled={!isPresent}
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.3, delay: index * 0.1 }}
+            whileHover={isPresent ? { scale: 1.05 } : {}}
+            whileTap={isPresent ? { scale: 0.95 } : {}}
           >
             {swara}
-          </div>
+            {isActive && (
+              <motion.div
+                className="absolute inset-0 rounded-lg border-2 border-raga-primary"
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.8, opacity: 0 }}
+              />
+            )}
+          </motion.button>
         );
       })}
-    </div>
+    </motion.div>
   );
 }
